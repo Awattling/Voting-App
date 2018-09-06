@@ -4,6 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import server.Poll;
+
 public class Views implements Runnable {
 	JFrame frame = new JFrame("Voting App");
 	JPanel panel = new JPanel();
@@ -23,10 +25,10 @@ public class Views implements Runnable {
 		panel.setCursor(Cursor.getDefaultCursor());
 	}
 	
-	public void loading_view(boolean active){
+	public void loading_view(boolean active, String message){
 		resetPanel();
 		// Creating label element for this view // 
-		JLabel status = new JLabel("Running Staus");
+		JLabel status = new JLabel(message);
 		
 		// Adding elements in gridbagLayout. // 
 		panel.setLayout(new GridBagLayout());
@@ -48,8 +50,8 @@ public class Views implements Runnable {
 			// Setting cursor to imply loading // 
 			panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		}
-		
-		// Refreshing the display of the panel with added elements// 
+		// Refreshing the display of the panel with added elements//
+		panel.revalidate();
 		panel.repaint();
 	}
 	
@@ -229,5 +231,33 @@ public class Views implements Runnable {
 
 	public void setSocketHandler(SocketHandler handle) {
 		this.handle = handle;
+	}
+
+	public void voting_view(Poll poll) {
+		resetPanel();
+		
+		// Setting up gridbag layout// 
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		
+		// Question // 
+		JLabel question = new JLabel(poll.getQuestion());
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		panel.add(question, gbc);
+		
+		String[] candidates = poll.getCandidates(); 
+		for(int x = 0; x < candidates.length; x++){
+			JLabel candy = new JLabel(candidates[x]);
+			gbc.gridx = 0;
+			gbc.gridy = x+1;
+			panel.add(candy, gbc);
+		}
+		
+		// Refreshing the display of the panel with added elements//
+		panel.revalidate();
+		panel.repaint();
 	}
 }

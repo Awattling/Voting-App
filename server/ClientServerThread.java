@@ -9,8 +9,6 @@ import client.Person;
 
 public class ClientServerThread extends Thread {
 	private Socket clientSock; 
-	//private BufferedReader in;
-	//private DataOutputStream outData;
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
 	private boolean running = true;
@@ -29,7 +27,7 @@ public class ClientServerThread extends Thread {
 				System.out.println("Client Says: " +  time);
 				outObj.writeObject(activePolls(time));
 				Person person = (Person) inObj.readObject(); 
-				System.out.println("Client Says: " +  person.getFname());
+				outObj.writeObject(validatePerson(person));
 			}
 			
 		}catch(Exception e){
@@ -44,6 +42,11 @@ public class ClientServerThread extends Thread {
 			}
 		}
 		
+	}
+	private boolean validatePerson(Person person) {
+		// TODO Validate person against database // 
+		System.out.println("Person Validated");
+		return true;
 	}
 	private Poll activePolls(String time) {
 		// TODO Get polls from Database // 

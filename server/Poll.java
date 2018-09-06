@@ -11,8 +11,8 @@ public class Poll implements Serializable{
 	int id = 123323;
 	LocalDateTime activeTime = LocalDateTime.parse("2018-08-28T09:00:00");
 	LocalDateTime inactiveTime = LocalDateTime.parse("2018-09-29T21:00:00");
-	private String question = ""; 
-	String[] candidates = {"Donald Trump", "Hillary Clinton"};
+	private String question = "Who do you vote for President?"; 
+	private String[] candidates = {"Donald Trump", "Hillary Clinton"};
 
 	public String getQuestion() {
 		return question;
@@ -20,5 +20,13 @@ public class Poll implements Serializable{
 
 	public void setQuestion(String question) {
 		this.question = question;
+	}
+
+	public String[] getCandidates() {
+		return candidates;
+	}
+
+	public void setCandidates(String[] candidates) {
+		this.candidates = candidates;
 	}
 }
