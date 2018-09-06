@@ -3,7 +3,7 @@ package server;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class poll implements Serializable{
+public class Poll implements Serializable{
 	/**
 	 * 
 	 */

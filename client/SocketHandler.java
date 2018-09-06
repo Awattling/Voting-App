@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 import javax.swing.JLabel;
 
-import server.poll;
+import server.Poll;
 
 /**
  * @author Austin Wattling
@@ -26,13 +26,13 @@ public class SocketHandler {
 	protected final String host = "localhost"; 
 	protected final int port = 4000; 
 	protected Socket clientSocket; 
-	protected views window; 
+	protected Views window; 
 	
 	
 	public void setup(){
 		try{
 			establishConnection();
-			poll aPoll = getPolls();
+			Poll aPoll = getPolls();
 			if(aPoll == null){
 				window.loading_view(false);
 				JLabel lbl = (JLabel)window.panel.getComponent(0);
@@ -52,12 +52,12 @@ public class SocketHandler {
 		}
 	}
 	
-	private poll getPolls() throws IOException, ClassNotFoundException {
+	private Poll getPolls() throws IOException, ClassNotFoundException {
 		window.loading_view(true);
 		JLabel lbl = (JLabel)window.panel.getComponent(0);
 		objOut.writeObject((getTime().toString()));
 		lbl.setText("Askng for open polls and registrations");
-		poll apoll = (poll)objIn.readObject(); 
+		Poll apoll = (Poll)objIn.readObject(); 
 		return apoll;
 	}
 
@@ -83,7 +83,7 @@ public class SocketHandler {
 		return now;  
 	}
 	
-	public void setWindow(views window) {
+	public void setWindow(Views window) {
 		this.window = window; 
 	}
 

@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class views implements Runnable {
+public class Views implements Runnable {
 	JFrame frame = new JFrame("Voting App");
 	JPanel panel = new JPanel();
 	SocketHandler handle; 

@@ -25,7 +25,7 @@ public class Server {
 			try{
 				// Starts a new ClientServer thread to handle each client and continues to listen for new clients. // 
 				Socket clientSocket = serveSocket.accept();
-				clientServerThread helper = new clientServerThread(clientSocket);
+				ClientServerThread helper = new ClientServerThread(clientSocket);
 				helper.start();
 			}catch(Exception e){
 				e.printStackTrace();
