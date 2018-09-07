@@ -12,6 +12,7 @@ public class ClientServerThread extends Thread {
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
 	private boolean running = true;
+	private Person person; 
 	public ClientServerThread(Socket sock) {
 		clientSock = sock; 
 	}
@@ -20,14 +21,16 @@ public class ClientServerThread extends Thread {
 		try{
 			outObj = new ObjectOutputStream(clientSock.getOutputStream()); 
 			inObj = new ObjectInputStream(clientSock.getInputStream()); 
-			
-			
+
 			while(running){
 				String time = (String) inObj.readObject();
 				System.out.println("Client Says: " +  time);
 				outObj.writeObject(activePolls(time));
-				Person person = (Person) inObj.readObject(); 
-				outObj.writeObject(validatePerson(person));
+				person = (Person) inObj.readObject(); 
+				outObj.writeObject(validatePerson());
+				String vote = (String) inObj.readObject();
+				outObj.writeObject(castVote(vote));
+				
 			}
 			
 		}catch(Exception e){
@@ -43,7 +46,11 @@ public class ClientServerThread extends Thread {
 		}
 		
 	}
-	private boolean validatePerson(Person person) {
+	private boolean castVote(String vote) {
+		System.out.println(person.getFname() + " cast a vote for " + vote);
+		return true; 
+	}
+	private boolean validatePerson() {
 		// TODO Validate person against database // 
 		System.out.println("Person Validated");
 		return true;

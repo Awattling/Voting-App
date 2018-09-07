@@ -1,6 +1,8 @@
 package client;
 
 import java.awt.*;
+import java.util.Enumeration;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -10,6 +12,7 @@ public class Views implements Runnable {
 	JFrame frame = new JFrame("Voting App");
 	JPanel panel = new JPanel();
 	SocketHandler handle; 
+	Poll poll; 
 	
 	public void run(){
 		frame.setSize(500, 400);
@@ -233,7 +236,7 @@ public class Views implements Runnable {
 		this.handle = handle;
 	}
 
-	public void voting_view(Poll poll) {
+	public void voting_view() {
 		resetPanel();
 		
 		// Setting up gridbag layout// 
@@ -249,15 +252,107 @@ public class Views implements Runnable {
 		panel.add(question, gbc);
 		
 		String[] candidates = poll.getCandidates(); 
+		ButtonGroup bg = new ButtonGroup();
 		for(int x = 0; x < candidates.length; x++){
-			JLabel candy = new JLabel(candidates[x]);
+			
+			//Create the radio buttons.
+	        JRadioButton radio = new JRadioButton(candidates[x]);
+	        bg.add(radio);
 			gbc.gridx = 0;
 			gbc.gridy = x+1;
-			panel.add(candy, gbc);
+			panel.add(radio, gbc);
 		}
+		
+		// Submit Button //
+		JButton submit = new JButton("Submit");
+		
+		// Since Java 8 we can use a lambda closure to make this much prettier//
+		submit.addActionListener(e -> confirm_vote_helper(bg));
+		
+		submit.setBackground(Color.green);
+		submit.setOpaque(true);
+		gbc.gridwidth = 2;
+		gbc.gridx = 0;
+		gbc.gridy = candidates.length + 2;
+		panel.add(submit, gbc);
 		
 		// Refreshing the display of the panel with added elements//
 		panel.revalidate();
 		panel.repaint();
+	}
+
+	private void confirm_vote_helper(ButtonGroup bg) {
+		boolean voted = false; 
+		for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements();) {
+	       AbstractButton button = (AbstractButton) buttons.nextElement();
+	       if (button.isSelected()) {
+	       		voted = true;
+	       		confirmation_view (button.getText());
+	        }
+	     }
+		 if(voted == false){
+			 confirmation_view(null);
+		 }
+	}
+	
+	public void confirmation_view(String vote){
+		resetPanel();
+		System.out.println(vote);
+		
+		// Setting up gridbag layout // 
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		
+		// Creating label elements for this view // 
+		JLabel message; 
+		if(vote == null){
+			message = new JLabel("You have chosen to throw away your ballot");
+		}else{
+			message = new JLabel("You have chosen to cast a vote for " + vote);
+		}
+		JLabel question = new JLabel("Are you sure you want to do this?"); 
+		
+		// Adding labels to view // 
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		panel.add(message, gbc);
+		gbc.gridy = 1;
+		panel.add(question, gbc);
+		
+		// Yes Button //
+		JButton yes = new JButton("Yes");
+		
+		// Since Java 8 we can use a lambda closure to make this much prettier//
+		yes.addActionListener(e -> handle.collectVote(vote));
+		
+		yes.setBackground(Color.green);
+		yes.setOpaque(true);
+		gbc.gridwidth = 2;
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		panel.add(yes, gbc);
+
+		// NO Button //
+		JButton no = new JButton("No");
+		
+		// Since Java 8 we can use a lambda closure to make this much prettier//
+		no.addActionListener(e -> voting_view());
+		
+		no.setBackground(Color.red);
+		no.setOpaque(true);
+		gbc.gridwidth = 2;
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		panel.add(no, gbc);
+
+		// Refreshing the display of the panel with added elements//
+		panel.revalidate();
+		panel.repaint();
+	}
+	
+	public void setPoll(Poll poll) {
+		this.poll = poll;		
 	}
 }

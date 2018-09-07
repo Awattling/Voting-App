@@ -12,7 +12,7 @@ public class Poll implements Serializable{
 	LocalDateTime activeTime = LocalDateTime.parse("2018-08-28T09:00:00");
 	LocalDateTime inactiveTime = LocalDateTime.parse("2018-09-29T21:00:00");
 	private String question = "Who do you vote for President?"; 
-	private String[] candidates = {"Donald Trump", "Hillary Clinton"};
+	private String[] candidates = {"Donald Trump", "Hillary Clinton", "Austin Wattling", "Pizza Pops"};
 
 	public String getQuestion() {
 		return question;

@@ -23,17 +23,12 @@ public class SocketHandler {
 	protected final int port = 4000; 
 	protected Socket clientSocket; 
 	protected Views window; 
-	protected Poll poll;
 	
 	public void setup(){
 		try{
 			establishConnection();
-			poll = getPolls();
-			if(poll == null){
-				window.loading_view(false, "No Active Polls at this time. Please Try again Later");
-			}else{
-				window.registration_view();
-			}
+			getPolls();
+			
 		}catch(IOException e){
 			window.loading_view(false, "Error: Server Connection Could not be Established. Try again later");
 			e.printStackTrace();
@@ -44,11 +39,16 @@ public class SocketHandler {
 		}
 	}
 	
-	private Poll getPolls() throws IOException, ClassNotFoundException {
+	private void getPolls() throws IOException, ClassNotFoundException {
 		window.loading_view(true, "Askng for open polls and registrations");
 		objOut.writeObject((getTime().toString()));
-		Poll apoll = (Poll)objIn.readObject(); 
-		return apoll;
+		Poll poll = (Poll)objIn.readObject();
+		if(poll == null){
+			window.loading_view(false, "No Active Polls at this time. Please Try again Later");
+		}else{
+			window.setPoll(poll); 
+			window.registration_view();
+		}
 	}
 
 	// Starting method needed to get the connection to server up and running // 
@@ -77,7 +77,7 @@ public class SocketHandler {
 			objOut.writeObject(person);
 			boolean valid = (boolean)objIn.readObject();
 			if(valid){
-				window.voting_view(poll);
+				window.voting_view();
 			}else{
 				System.out.println("Registartion Invalid");
 			}
@@ -98,6 +98,31 @@ public class SocketHandler {
 			clientSocket.close();
 		} catch (IOException e) {
 			System.out.println("Something went wrong shutting down the connection");
+		}
+	}
+
+	public void collectVote(String vote) {
+		try {
+			objOut.writeObject(vote);
+			boolean valid = (boolean)objIn.readObject();
+			if(valid){
+				window.loading_view(false, "Vote Sucessfully Cast" );
+			}else{
+				window.loading_view(false, "Vote could not be cast at this time. Try again Later" );
+			}
+			Thread.sleep(5000);
+			setup();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			window.loading_view(false, "Server Connection could not be Established. Please Restart Application");	
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
