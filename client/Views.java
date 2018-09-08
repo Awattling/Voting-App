@@ -28,6 +28,10 @@ public class Views implements Runnable {
 		panel.setCursor(Cursor.getDefaultCursor());
 	}
 	
+	// Method to display a loading type of view. 
+		// Boolean to show active loading // 
+		// String to show message to user // 
+		// Boolean to add in a restart button for some use cases // 
 	public void loading_view(boolean active, String message, boolean restart){
 		resetPanel();
 		// Creating label element for this view // 
@@ -72,6 +76,7 @@ public class Views implements Runnable {
 		panel.repaint();
 	}
 	
+	// Registration View // 
 	public void registration_view(){
 		resetPanel();
 		
@@ -189,6 +194,8 @@ public class Views implements Runnable {
 		panel.repaint();
 	}
 	
+	// Method to ensure all the fields in the registration view are filled out// 
+	// If they are not the field that is not filled out will be highlighted for the user // 
 	public void validateRegistration(){
 		boolean allFull = true;
 		// Checks to see if forms have an input before submitting to server to see if valid // 
@@ -250,6 +257,7 @@ public class Views implements Runnable {
 		this.handle = handle;
 	}
 
+	// View that uses the poll given to the view to make a poll view // 
 	public void voting_view() {
 		resetPanel();
 		
@@ -295,6 +303,7 @@ public class Views implements Runnable {
 		panel.repaint();
 	}
 
+	// Method used to pull the value for the selected candidate in voting view // 
 	private void confirm_vote_helper(ButtonGroup bg) {
 		boolean voted = false; 
 		for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements();) {
@@ -309,6 +318,7 @@ public class Views implements Runnable {
 		 }
 	}
 	
+	// Asks the user to confirm their vote before submitting // 
 	public void confirmation_view(String vote){
 		resetPanel();
 		System.out.println(vote);
@@ -368,14 +378,5 @@ public class Views implements Runnable {
 	
 	public void setPoll(Poll poll) {
 		this.poll = poll;		
-	}
-
-	public void sleep(int i) {
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
