@@ -11,7 +11,6 @@ public class ClientServerThread extends Thread {
 	private Socket clientSock; 
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
-	private boolean running = true;
 	private Person person; 
 	public ClientServerThread(Socket sock) {
 		clientSock = sock; 
@@ -19,34 +18,39 @@ public class ClientServerThread extends Thread {
 	public void run(){
 		System.out.println("Accepted Client. Address: " + clientSock.getInetAddress().getHostName());
 		try{
+			// Starting up connection // 
 			outObj = new ObjectOutputStream(clientSock.getOutputStream()); 
 			inObj = new ObjectInputStream(clientSock.getInputStream()); 
-
-			while(running){
-				String time = (String) inObj.readObject();
-				System.out.println("Client Says: " +  time);
-				outObj.writeObject(activePolls(time));
-				person = (Person) inObj.readObject(); 
-				outObj.writeObject(validatePerson());
-				String vote = (String) inObj.readObject();
-				outObj.writeObject(castVote(vote));
-				
-			}
+			
+			// Receiving time from client // 
+			String time = (String) inObj.readObject();
+			System.out.println("Client Says: " +  time);
+			
+			//Responding with active polls to client // 
+			outObj.writeObject(activePolls(time));
+			
+			// Receiving Person from client and responding with validation results // 
+			person = (Person) inObj.readObject(); 
+			outObj.writeObject(validatePerson());
+			
+			// Receiving vote from client and responding with validation that the vote was cast // 
+			String vote = (String) inObj.readObject();
+			outObj.writeObject(castVote(vote));
 			
 		}catch(Exception e){
-			e.printStackTrace();
+			System.out.println("Client closed connection unexpectedly");
 		}finally{
-			System.out.println("Closing Connection");
+			System.out.println("Closing Server Connection");
 			try{
 				outObj.close();
 				clientSock.close();
 			}catch(Exception e){
-				e.printStackTrace();
+				System.out.println("Failed to close socket");
 			}
 		}
-		
 	}
 	private boolean castVote(String vote) {
+		// Record vote into database // 
 		System.out.println(person.getFname() + " cast a vote for " + vote);
 		return true; 
 	}

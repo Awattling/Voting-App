@@ -26,43 +26,41 @@ public class SocketHandler {
 	
 	public void setup(){
 		try{
+			// Establishing Connection to Server // 
 			establishConnection();
+			// Getting Active polls from the Server // 
 			getPolls();
 			
 		}catch(IOException e){
-			window.loading_view(false, "Error: Server Connection Could not be Established. Try again later");
-			e.printStackTrace();
-		}catch(ClassNotFoundException e){
-			e.printStackTrace();
+			window.loading_view(false, "Error: Server Connection Could not be Established. Try again later", true);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
-	private void getPolls() throws IOException, ClassNotFoundException {
-		window.loading_view(true, "Askng for open polls and registrations");
-		objOut.writeObject((getTime().toString()));
-		Poll poll = (Poll)objIn.readObject();
-		if(poll == null){
-			window.loading_view(false, "No Active Polls at this time. Please Try again Later");
-		}else{
-			window.setPoll(poll); 
-			window.registration_view();
-		}
-	}
-
 	// Starting method needed to get the connection to server up and running // 
 	private void establishConnection() throws UnknownHostException, IOException, ClassNotFoundException{
 		// Showing loading screen view // 
-		window.loading_view(true, "Attempting Connection to Server");
+		window.loading_view(true, "Attempting Connection to Server", false);
 		// Attempting connection to client // 
 		clientSocket = new Socket(host , port);
 		objIn = new ObjectInputStream(clientSocket.getInputStream());
 		objOut = new ObjectOutputStream(clientSocket.getOutputStream());
 		// Sharing connection Successful with User // 	
-		window.loading_view(true, "Server Connection Established");	
+		window.loading_view(true, "Server Connection Established", false);	
 	}
-	
+	private void getPolls() throws IOException, ClassNotFoundException {
+		// Using window to notify user // 
+		window.loading_view(true, "Askng for open polls and registrations", false);
+		// Writing time to connection // 
+		objOut.writeObject((getTime().toString()));
+		Poll poll = (Poll)objIn.readObject();
+		if(poll == null){
+			window.loading_view(false, "No Active Polls at this time. Please Try again Later", true);
+		}else{
+			window.setPoll(poll); 
+			window.registration_view();
+		}
+	}
 	private LocalDateTime getTime(){
 		LocalDateTime now = LocalDateTime.now();  
 		return now;  
@@ -74,19 +72,17 @@ public class SocketHandler {
 
 	public void submitRegistrationToServer(Person person) {
 		try {
+			// Writing person to connection // 
 			objOut.writeObject(person);
 			boolean valid = (boolean)objIn.readObject();
 			if(valid){
 				window.voting_view();
 			}else{
-				System.out.println("Registartion Invalid");
+				System.out.println("Registration Invalid");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			window.loading_view(false, "Server Connection could not be Established. Please Restart Application");	
+			window.loading_view(false, "Server Connection could not be Established. Please Restart Application", true);	
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -106,21 +102,15 @@ public class SocketHandler {
 			objOut.writeObject(vote);
 			boolean valid = (boolean)objIn.readObject();
 			if(valid){
-				window.loading_view(false, "Vote Sucessfully Cast" );
+				window.loading_view(false, "Vote Sucessfully Cast", true );
 			}else{
-				window.loading_view(false, "Vote could not be cast at this time. Try again Later" );
+				window.loading_view(false, "Vote could not be cast at this time. Try again Later", true);
 			}
-			Thread.sleep(5000);
-			setup();
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			window.loading_view(false, "Server Connection could not be Established. Please Restart Application");	
+			window.loading_view(false, "Server Connection could not be Established. Please Restart Application", true);	
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

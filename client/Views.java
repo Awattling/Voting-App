@@ -28,7 +28,7 @@ public class Views implements Runnable {
 		panel.setCursor(Cursor.getDefaultCursor());
 	}
 	
-	public void loading_view(boolean active, String message){
+	public void loading_view(boolean active, String message, boolean restart){
 		resetPanel();
 		// Creating label element for this view // 
 		JLabel status = new JLabel(message);
@@ -52,6 +52,20 @@ public class Views implements Runnable {
 			panel.add(progress, gbc);
 			// Setting cursor to imply loading // 
 			panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		}
+		if(restart){
+			// Submit Button //
+			JButton restartBtn = new JButton("Restart");
+			
+			// Since Java 8 we can use a lambda closure to make this much prettier//
+			restartBtn.addActionListener(e -> Client.initilizing());
+			
+			restartBtn.setBackground(Color.green);
+			restartBtn.setOpaque(true);
+			gbc.gridwidth = 2;
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			panel.add(restartBtn, gbc);
 		}
 		// Refreshing the display of the panel with added elements//
 		panel.revalidate();
@@ -354,5 +368,14 @@ public class Views implements Runnable {
 	
 	public void setPoll(Poll poll) {
 		this.poll = poll;		
+	}
+
+	public void sleep(int i) {
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
