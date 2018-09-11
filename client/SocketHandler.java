@@ -8,7 +8,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.time.LocalDateTime;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
+import com.sun.net.ssl.internal.ssl.Provider;
 
 import server.Poll;
 
@@ -32,19 +41,36 @@ public class SocketHandler {
 			getPolls();
 			
 		}catch(IOException e){
+			e.printStackTrace();
 			window.loading_view(false, "Error: Server Connection Could not be Established. Try again later", true);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	// Starting method needed to get the connection to server up and running // 
-	private void establishConnection() throws UnknownHostException, IOException, ClassNotFoundException{
+	private void establishConnection() throws UnknownHostException, IOException, ClassNotFoundException, KeyManagementException, NoSuchAlgorithmException{
 		// Showing loading screen view // 
 		window.loading_view(true, "Attempting Connection to Server", false);
+		
 		// Attempting connection to client // 
-		clientSocket = new Socket(host , port);
-		objIn = new ObjectInputStream(clientSocket.getInputStream());
-		objOut = new ObjectOutputStream(clientSocket.getOutputStream());
+		
+		// Adding JSSE provider for client encryption functionality.// 
+		Security.addProvider(new Provider());
+		// Specifying the trust store file which contains the certificate of the public server. // 
+		System.setProperty("javax.net.ssl.trustStore", "myTrustStore.jts");
+		// Specifying the password required to access the trust store // 
+		System.setProperty("javax.net.ssl.trustStorePassword", "password");
+		// Setting property to output SSL information --optional // 
+		//System.setProperty("javax.net.debug", "all");
+		
+		
+		SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault(); 
+		SSLSocket sslClientSocket = (SSLSocket)factory.createSocket(host, port); 
+		//sslClientSocket.startHandshake();
+		
+		objIn = new ObjectInputStream(sslClientSocket.getInputStream());
+		objOut = new ObjectOutputStream(sslClientSocket.getOutputStream());		
+		
 		// Sharing connection Successful with User // 	
 		window.loading_view(true, "Server Connection Established", false);	
 	}
