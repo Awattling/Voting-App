@@ -9,9 +9,15 @@ public class Server {
 	protected static int portNumber = 4000;
 	protected static boolean running = true;  
 	protected static boolean quit = false;
+	protected static boolean debug = false; 
+	protected static boolean SSLdebug = false; 
 	static ClientAcceptor clientAcceptor; 
 	public static void main(String[] args){
-		startServer();
+		if(args.length == 1){
+			SSLdebug = Boolean.parseBoolean(args[0]); 
+			System.out.println("SSLDebug set to " + SSLdebug);
+		}
+		startServer(portNumber);
 		mainMenu();
 	}
 	private static void mainMenu() {
@@ -44,6 +50,7 @@ public class Server {
 		}while(!quit);
 		in.close();
 	}
+
 	private static void stopServer() {
 		System.out.println("Stopping Server");
 		clientAcceptor.haltServer();
@@ -54,16 +61,23 @@ public class Server {
 		
 	}
 	private static void toggleDebug() {
-		// TODO Auto-generated method stub
+		System.out.println("Debug messages set to " + !debug);
+		if(debug){
+			clientAcceptor.setDebug(!debug);
+		}else{
+			clientAcceptor.setDebug(!debug);
+		}
+		debug = !debug;
 		
 	}
 	private static void databaseToggle() {
 		// TODO Auto-generated method stub
 		
 	}
-	public static void startServer(){
+	public static void startServer(int portNumber){
 		// Starting the main Client Acceptor thread // 
-		clientAcceptor = new ClientAcceptor(portNumber);
+		System.out.println("Starting Server on port " + portNumber);
+		clientAcceptor = new ClientAcceptor(portNumber, SSLdebug); 
 		Thread t1 = new Thread(clientAcceptor);
 		t1.start();
 	}

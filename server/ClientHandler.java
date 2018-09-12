@@ -12,11 +12,14 @@ public class ClientHandler extends Thread {
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
 	private Person person; 
-	public ClientHandler(Socket sock) {
+	boolean debug = false;
+	
+	public ClientHandler(Socket sock, Boolean debug) {
 		clientSock = sock; 
+		this.debug = debug; 
 	}
 	public void run(){
-		System.out.println("Accepted Client. Address: " + clientSock.getInetAddress().getHostName());
+		debug("Accepted Client. Address: " + clientSock.getInetAddress().getHostName());
 		try{
 			// Starting up connection // 
 			outObj = new ObjectOutputStream(clientSock.getOutputStream()); 
@@ -24,7 +27,7 @@ public class ClientHandler extends Thread {
 			
 			// Receiving time from client // 
 			String time = (String) inObj.readObject();
-			System.out.println("Client Says: " +  time);
+			debug("Client Says: " +  time);
 			
 			//Responding with active polls to client // 
 			outObj.writeObject(activePolls(time));
@@ -38,25 +41,25 @@ public class ClientHandler extends Thread {
 			outObj.writeObject(castVote(vote));
 			
 		}catch(Exception e){
-			System.out.println("Client closed connection unexpectedly");
+			debug("Client closed connection unexpectedly");
 		}finally{
-			System.out.println("Closing Server Connection");
+			debug("Closing Server Connection");
 			try{
 				outObj.close();
 				clientSock.close();
 			}catch(Exception e){
-				System.out.println("Failed to close socket");
+				debug("Failed to close socket");
 			}
 		}
 	}
 	private boolean castVote(String vote) {
 		//TODO Record vote into database // 
-		System.out.println(person.getFname() + " cast a vote for " + vote);
+		debug(person.getFname() + " cast a vote for " + vote);
 		return true; 
 	}
 	private boolean validatePerson() {
 		// TODO Validate person against database // 
-		System.out.println("Person Validated");
+		debug("Person Validated");
 		return true;
 	}
 	private Poll activePolls(String time) {
@@ -64,11 +67,16 @@ public class ClientHandler extends Thread {
 		LocalDateTime currentTime = LocalDateTime.parse(time);
 		Poll aPoll = new Poll();
 		if(aPoll.activeTime.isBefore(currentTime) && aPoll.inactiveTime.isAfter(currentTime)){
-			System.out.println("Active Poll found");
+			debug("Active Poll found");
 			return aPoll;
 		}else{
-			System.out.println("No Active Polls at this time");
+			debug("No Active Polls at this time");
 			return null;	
+		}
+	}
+	private void debug(String msg){
+		if(debug){
+			System.out.println("[ClientHandler] " + msg);
 		}
 	}
 	
