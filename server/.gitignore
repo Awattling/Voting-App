@@ -3,3 +3,7 @@
 /poll.class
 /ClientServerThread.class
 /Poll.class
+/ClientHandler.class
+/Person.class
+/ServerRunnable.class
+/ClientAcceptor.class

@@ -37,9 +37,7 @@ public class SocketHandler {
 			establishConnection();
 			// Getting Active polls from the Server // 
 			getPolls();
-			
 		}catch(IOException e){
-			e.printStackTrace();
 			window.loading_view(false, "Error: Server Connection Could not be Established. Try again later", true);
 		}catch(Exception e){
 			e.printStackTrace();

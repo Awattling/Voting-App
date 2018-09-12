@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 import client.Person;
 
-public class ClientServerThread extends Thread {
+public class ClientHandler extends Thread {
 	private Socket clientSock; 
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
 	private Person person; 
-	public ClientServerThread(Socket sock) {
+	public ClientHandler(Socket sock) {
 		clientSock = sock; 
 	}
 	public void run(){
@@ -50,7 +50,7 @@ public class ClientServerThread extends Thread {
 		}
 	}
 	private boolean castVote(String vote) {
-		// Record vote into database // 
+		//TODO Record vote into database // 
 		System.out.println(person.getFname() + " cast a vote for " + vote);
 		return true; 
 	}
