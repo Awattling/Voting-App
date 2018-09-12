@@ -12,11 +12,12 @@ public class Client {
 	
 	
 	public static void main(String[] args) {
+		window = new Views();
 		initilizing();
 	}
 	public static void initilizing(){
 		/* Opens a separate main thread for the UI found in the class view*/
-		window = new Views();
+		
 		SwingUtilities.invokeLater(window);
 		
 		// Starts the main event loop// 
