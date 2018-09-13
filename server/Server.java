@@ -3,6 +3,9 @@
  */
 package server;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Server {
@@ -71,7 +74,19 @@ public class Server {
 		
 	}
 	private static void databaseToggle() {
-		// TODO Auto-generated method stub
+		try {
+			 // Registering the SQL driver // 
+		    Class.forName("com.mysql.jdbc.Driver");
+		    // Connecting to database // 
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/voting_app", "vote", "");
+			System.out.println("DATABASE CONNECTED");
+		} catch (SQLException e) {
+			System.out.println("OH NO");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		
 	}
 	public static void startServer(int portNumber){
