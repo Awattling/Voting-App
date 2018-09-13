@@ -7,3 +7,5 @@
 /Person.class
 /ServerRunnable.class
 /ClientAcceptor.class
+/databaseManager.class
+/DatabaseManager.class
