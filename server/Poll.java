@@ -10,10 +10,10 @@ public class Poll implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	int id = 123323;
-	LocalDateTime activeTime = LocalDateTime.parse("2018-08-28T09:00:00");
-	LocalDateTime inactiveTime = LocalDateTime.parse("2018-09-29T21:00:00");
-	private String question = "Who do you vote for President?"; 
-	private String[] candidates = {"Donald Trump", "Hillary Clinton", "Austin Wattling", "Pizza Pops"};
+	private LocalDateTime activeTime = LocalDateTime.parse("2015-08-28T09:00:00");
+	private LocalDateTime inActiveTime = LocalDateTime.parse("2030-09-29T21:00:00");
+	private String question = "Default Question"; 
+	private String[] candidates = {"Default Poll Option 1", "Default Poll Option 2"};
 
 	public String getQuestion() {
 		return question;
@@ -29,5 +29,24 @@ public class Poll implements Serializable{
 
 	public void setCandidates(String[] candidates) {
 		this.candidates = candidates;
+	}
+
+	public void setActiveTime(LocalDateTime activeTime) {
+		this.activeTime = activeTime;
+	}
+
+	public void setInActiveTime(LocalDateTime inActiveTime) {
+		this.inActiveTime = inActiveTime;
+	}
+	public LocalDateTime getActiveTime() {
+		return activeTime;
+	}
+
+	public LocalDateTime getInActiveTime() {
+		return inActiveTime;
+	}
+	
+	public void setId(int id){
+		this.id = id; 
 	}
 }

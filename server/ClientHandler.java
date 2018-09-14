@@ -13,10 +13,12 @@ public class ClientHandler extends Thread {
 	private ObjectInputStream inObj;
 	private Person person; 
 	boolean debug = false;
+	private DatabaseManager dbma; 
 	
-	public ClientHandler(Socket sock, Boolean debug) {
+	public ClientHandler(Socket sock, Boolean debug, DatabaseManager dbma) {
 		clientSock = sock; 
 		this.debug = debug; 
+		this.dbma = dbma;
 	}
 	public void run(){
 		debug("Accepted Client. Address: " + clientSock.getInetAddress().getHostName());
@@ -63,14 +65,18 @@ public class ClientHandler extends Thread {
 		return true;
 	}
 	private Poll activePolls(String time) {
-		// TODO Get polls from Database // 
+		Poll poll = dbma.getPoll();
+		// Check to see if Database Manager found anything for us // 
+		if(poll == null){
+			debug("Database Manager did not return a poll");
+			return null;
+		}
 		LocalDateTime currentTime = LocalDateTime.parse(time);
-		Poll aPoll = new Poll();
-		if(aPoll.activeTime.isBefore(currentTime) && aPoll.inactiveTime.isAfter(currentTime)){
+		if(poll.getActiveTime().isBefore(currentTime) && poll.getInActiveTime().isAfter(currentTime)){
 			debug("Active Poll found");
-			return aPoll;
+			return poll;
 		}else{
-			debug("No Active Polls at this time");
+			debug("Poll Found but is not active at this time");
 			return null;	
 		}
 	}

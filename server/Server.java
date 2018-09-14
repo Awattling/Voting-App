@@ -13,7 +13,6 @@ public class Server {
 	protected static boolean SSLdebug = false;
 	protected static ClientAcceptor clientAcceptor; 
 	protected static DatabaseManager dbma; 
-	
 
 	public static void main(String[] args){
 		if(args.length == 1){
@@ -81,8 +80,9 @@ public class Server {
 	public static void startServer(int portNumber){
 		// Starting the main Client Acceptor thread // 
 		System.out.println("Starting Server on port " + portNumber);
-		clientAcceptor = new ClientAcceptor(portNumber, SSLdebug); 
+		clientAcceptor = new ClientAcceptor(portNumber, SSLdebug, dbma); 
 		Thread t1 = new Thread(clientAcceptor);
 		t1.start();
+		
 	}
 }

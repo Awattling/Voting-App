@@ -14,10 +14,12 @@ public class ClientAcceptor implements Runnable {
 	boolean debug = false; 
 	boolean SSLdebug; 
 	SSLServerSocket serveSocket;
+	DatabaseManager dbma; 
 	
-	public ClientAcceptor(int portnumber, boolean SSLdebug){
+	public ClientAcceptor(int portnumber, boolean SSLdebug, DatabaseManager dbma){
 		this.portNumber = portnumber;
 		this.SSLdebug = SSLdebug; 
+		this.dbma = dbma; 
 	}
 	public void run() {
 		
@@ -49,7 +51,7 @@ public class ClientAcceptor implements Runnable {
 			try{
 				// Starts a new ClientServer thread to handle each client and continues to listen for new clients. // 
 				Socket clientSocket = serveSocket.accept();
-				ClientHandler helper = new ClientHandler(clientSocket, debug);
+				ClientHandler helper = new ClientHandler(clientSocket, debug, dbma);
 				helper.start();
 			}catch(Exception e){
 				// Probably means socket was closed // 

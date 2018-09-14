@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.Statement;
 
@@ -137,9 +138,53 @@ public class DatabaseManager {
 
 	public void toggle() {
 		databaseToggle = !databaseToggle;
+		System.out.println("Setting Database enabled to " + databaseToggle);
 		if(databaseToggle){
 			initilizeDatabase();
 		}
 		
+	}
+
+	public Poll getPoll() {
+		ResultSet rs;
+		Statement stmt;
+		String sql;
+		Poll poll = new Poll();
+		if(databaseToggle){
+			try {
+				sql = "SELECT * from polls";
+				stmt = (Statement) con.createStatement();
+				rs = stmt.executeQuery(sql); 
+				// Check to make sure we got something
+				if(!rs.next()){
+					return null;
+				}
+				//Right now take the first thing we get and cast it into the poll object //
+				// TODO build a link list of polls so we can utilize multiple polls at once //
+				poll.setId(rs.getInt("id"));
+				poll.setQuestion(rs.getString("question"));
+				poll.setActiveTime(rs.getTimestamp("active").toLocalDateTime());
+				poll.setInActiveTime(rs.getTimestamp("inActive").toLocalDateTime());
+				// Get corresponding candidates // 
+				sql = "SELECT * from options WHERE pollID=" + rs.getInt("id");
+				stmt = (Statement) con.createStatement();
+				rs = stmt.executeQuery(sql); 
+				// Put them into array and give to the poll for later use // 
+				ArrayList<String> candidates = new ArrayList<String>();
+				while(rs.next()){
+					candidates.add(rs.getString("name"));
+				}
+				String[] candidatesArr = new String[candidates.size()];
+				candidatesArr = candidates.toArray(candidatesArr);
+				poll.setCandidates(candidatesArr);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		return poll;
 	}
 }
