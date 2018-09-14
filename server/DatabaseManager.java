@@ -17,6 +17,7 @@ public class DatabaseManager {
 	
 	public DatabaseManager(){
 		initilizeDatabase();
+		populateDatabase();
 	}
 	
 	public void initilizeDatabase(){
@@ -26,7 +27,7 @@ public class DatabaseManager {
 		    // Connecting to database // 
 		    con = DriverManager.getConnection(databaseLocal, databaseUser, databasePass);
 			System.out.println("[DatabaseManager] Database connected");
-			// Getting database metadata for table checks // 
+			// Getting database meta data for table checks // 
 			DatabaseMetaData dbmd = con.getMetaData();
 			
 			
@@ -97,9 +98,48 @@ public class DatabaseManager {
 		}
 		
 	}
+	
+	public void populateDatabase(){
+		ResultSet rs;
+		Statement stmt;
+		String sql;
+		System.out.println("[DatabaseManager] Ensuring Database entries exist");
+		try {
+			// Checking to see if a poll exists in database // 
+			sql = "SELECT * from polls";
+			stmt = (Statement) con.createStatement();
+			rs = stmt.executeQuery(sql); 
+			if(rs.next() == false){
+				System.out.println("[DatabaseManager] Adding Default 2016 Election poll to database");
+				// If nothing Exists fill in with default 2016 Poll // 
+				sql = "INSERT INTO polls (id, active, inactive, question)" +
+				"VALUES ('2016', '2016-01-01T10:00:00', '2032-01-01T10:00:00', 'Who do you vote to be the next president of the United States?')";
+				stmt = (Statement) con.createStatement();
+				stmt.executeUpdate(sql); 
+			}
+			// Checking to see if candidate options exist in database // 
+			sql = "SELECT * from options";
+			stmt = (Statement) con.createStatement();
+			rs = stmt.executeQuery(sql); 
+			if(rs.next() == false){
+				System.out.println("[DatabaseManager] Adding Default 2016 Election poll options to database");
+				// If nothing Exists fill in with default 2016 Poll // 
+				sql = "INSERT INTO options (id, name, pollID)" +
+				"VALUES ('1', 'Donald Trump', '2016'), ('2', 'Hillary Clinton', '2016'), ('3', 'Austin Wattling', '2016')";
+				stmt = (Statement) con.createStatement();
+				stmt.executeUpdate(sql); 
+			}
+		} catch (Exception e) {
+			System.out.println("[DatabaseManager] Something failed adding default poll to database");
+		}
+		
+	}
 
 	public void toggle() {
-		// TODO Auto-generated method stub
+		databaseToggle = !databaseToggle;
+		if(databaseToggle){
+			initilizeDatabase();
+		}
 		
 	}
 }
