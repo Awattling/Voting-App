@@ -35,3 +35,14 @@ Running Instructions:
 - Start server.java with optional boolean command line argument: Java Server.java [true/false]
 - Command line argument is for SSL debug information
 - Start any number of clients and walk through interaction: Java Client.java
+
+
+Future Iterations: 
+- Handle multiple polls at one time
+- Encrypt connection to database
+- More/better Error handling
+- UI improvements
+- Pattern matching of candates votes based on ID rather than name String.
+- Better field validation and handling during user registration. 
+- Ability to show vote counts in client using graphics or other visual data representations.
+- More things as I come up with them
