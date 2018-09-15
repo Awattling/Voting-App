@@ -249,4 +249,62 @@ public class DatabaseManager {
 			return true;
 		}
 	}
+
+	public void viewVotes() {
+		if(databaseToggle){
+			try{
+				ResultSet rs;
+				Statement stmt;
+				String sql;
+				sql = "SELECT * from polls";
+				stmt = (Statement) con.createStatement();
+				rs = stmt.executeQuery(sql); 
+				// Check to make sure we got something
+				if(!rs.next()){
+					System.out.println("[DatabaseManager] No polls exist at this time");
+				}else{
+					do{
+						// Make poll // 
+						Poll poll = new Poll();
+						poll.setId(rs.getInt("id"));
+						poll.setQuestion(rs.getString("question"));
+						// Get corresponding candidates // 
+						sql = "SELECT * from options WHERE pollID=" + rs.getInt("id");
+						stmt = (Statement) con.createStatement();
+						ResultSet rs2 = stmt.executeQuery(sql); 
+						
+						// Put candidates into array and vote numbers into array // 
+						ArrayList<String> candidates = new ArrayList<String>();
+						ArrayList<Integer> votes = new ArrayList<Integer>();
+						while(rs2.next()){
+							candidates.add(rs2.getString("name"));
+							votes.add(rs2.getInt("votes"));
+						}
+						// Make array of candidates //
+						String[] candidatesArr = new String[candidates.size()];
+						candidatesArr = candidates.toArray(candidatesArr);
+						poll.setCandidates(candidatesArr);
+						// Make array of votes corresponding to candidates // 
+						Integer[] votesArr = new Integer[votes.size()];
+						votesArr = votes.toArray(votesArr);
+						printPollHelper(poll, votesArr);
+					}while(rs.next());
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+				System.out.println("[DatabaseManager] Somethng went wrong getting votes from database");
+			}
+		}else{
+			System.out.println("[DatabaseManager] Database is not enabled so no votes are being recorded");
+		}
+		
+	}
+
+	private void printPollHelper(Poll poll, Integer[] votesArr) {
+		System.out.println(poll.getQuestion());
+		for(int x = 0; x < poll.getCandidates().length; x++){
+			System.out.println("-- " + poll.getCandidates()[x] + " Votes: " + votesArr[x]);
+		}
+		System.out.println("\n");
+	}
 }

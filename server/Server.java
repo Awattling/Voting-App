@@ -60,8 +60,7 @@ public class Server {
 		quit = true;
 	}
 	private static void viewVotes() {
-		// TODO Auto-generated method stub
-		
+		dbma.viewVotes();
 	}
 	private static void toggleDebug() {
 		System.out.println("Debug messages set to " + !debug);
