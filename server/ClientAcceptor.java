@@ -34,8 +34,6 @@ public class ClientAcceptor implements Runnable {
 			if(SSLdebug){
 				System.setProperty("javax.net.debug", "all");
 			}
-			
-			
 			// Establishes the SSL context. // 
 			SSLServerSocketFactory factory = (SSLServerSocketFactory)SSLServerSocketFactory.getDefault(); 
 			// Creates SSL Socket // 

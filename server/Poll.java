@@ -49,4 +49,8 @@ public class Poll implements Serializable{
 	public void setId(int id){
 		this.id = id; 
 	}
+
+	public int getID() {
+		return id;
+	}
 }

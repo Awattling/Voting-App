@@ -12,6 +12,7 @@ public class ClientHandler extends Thread {
 	private ObjectOutputStream outObj;
 	private ObjectInputStream inObj;
 	private Person person; 
+	private Poll poll;
 	boolean debug = false;
 	private DatabaseManager dbma; 
 	
@@ -60,12 +61,11 @@ public class ClientHandler extends Thread {
 		return true; 
 	}
 	private boolean validatePerson() {
-		// TODO Validate person against database // 
-		debug("Person Validated");
-		return true;
+		debug("validating Person");
+		return dbma.validatePerson(person,poll);
 	}
 	private Poll activePolls(String time) {
-		Poll poll = dbma.getPoll();
+		poll = dbma.getPoll();
 		// Check to see if Database Manager found anything for us // 
 		if(poll == null){
 			debug("Database Manager did not return a poll");

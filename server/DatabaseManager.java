@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Statement;
 
+import client.Person;
+
 public class DatabaseManager {
 	protected static String databaseLocal = "jdbc:mysql://localhost:3306/voting_app"; 
 	protected static String databaseUser = "root"; 
@@ -182,9 +184,37 @@ public class DatabaseManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
 		}
 		return poll;
+	}
+
+	public boolean validatePerson(Person person, Poll poll) {
+		ResultSet rs;
+		Statement stmt;
+		String sql;
+		
+		try {
+			// Check to make sure we got something // 
+			if(person == null){
+				return false;
+			}
+			sql = "SELECT * from PEOPLE WHERE id=" + person.getId();
+			stmt = (Statement) con.createStatement();
+			rs = stmt.executeQuery(sql); 
+			// Check to see if something with the same ID lives in database //
+			// For now if its a unique ID accept it and add it to the database// 
+			if(!rs.next()){
+				sql = "INSERT INTO people (id, fname, lname, address1, address2, postal, city, state, country, pollID)" +
+				"VALUES (' "+ person.getId() +"', '"+ person.getFname() +"', '"+ person.getLname() +"', '"+ person.getAdd1() +"', '"+ person.getAdd2() + "', '"+ person.getPost() +"', '"+ person.getCity() +"', '"+ person.getProv() +"', '"+ person.getCount()  +"', '"+ poll.getID() + "')" ;
+				stmt = (Statement) con.createStatement();
+				stmt.executeUpdate(sql); 
+				return true;
+			}
+			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Something went wrong entering a person into the database. Make sure all fields filled out match whats expected in the database");
+		}
+		return false;
 	}
 }
