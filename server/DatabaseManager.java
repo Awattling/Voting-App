@@ -81,7 +81,6 @@ public class DatabaseManager {
 	                   " city CHAR(255), " +
 	                   " state CHAR(255), " +
 	                   " country CHAR(255), " +
-	                   " idLegal INTEGER, " +
 	                   " pollID INTEGER not Null, " +
 	                   " FOREIGN KEY (pollID) REFERENCES polls(id),"+
 	                   " PRIMARY KEY ( id ))";
@@ -152,6 +151,7 @@ public class DatabaseManager {
 		Statement stmt;
 		String sql;
 		Poll poll = new Poll();
+		// Make Sure database operation is enabled // 
 		if(databaseToggle){
 			try {
 				sql = "SELECT * from polls";
@@ -193,28 +193,60 @@ public class DatabaseManager {
 		Statement stmt;
 		String sql;
 		
-		try {
-			// Check to make sure we got something // 
-			if(person == null){
+		// Check to see if database operation is enabled // 
+		if(databaseToggle){
+			try {
+				// Check to make sure we got something // 
+				if(person == null){
+					return false;
+				}
+				sql = "SELECT * from PEOPLE WHERE id=" + person.getId();
+				stmt = (Statement) con.createStatement();
+				rs = stmt.executeQuery(sql); 
+				// Check to see if something with the same ID lives in database //
+				// For now if its a unique ID accept it and add it to the database// 
+				if(!rs.next()){
+					sql = "INSERT INTO people (id, fname, lname, address1, address2, postal, city, state, country, pollID)" +
+					"VALUES (' "+ person.getId() +"', '"+ person.getFname() +"', '"+ person.getLname() +"', '"+ person.getAdd1() +"', '"+ person.getAdd2() + "', '"+ person.getPost() +"', '"+ person.getCity() +"', '"+ person.getProv() +"', '"+ person.getCount()  +"', '"+ poll.getID() + "')" ;
+					stmt = (Statement) con.createStatement();
+					stmt.executeUpdate(sql); 
+					return true;
+				}
 				return false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				System.out.println("Something went wrong entering a person into the database. Make sure all fields filled out match whats expected in the database");
 			}
-			sql = "SELECT * from PEOPLE WHERE id=" + person.getId();
-			stmt = (Statement) con.createStatement();
-			rs = stmt.executeQuery(sql); 
-			// Check to see if something with the same ID lives in database //
-			// For now if its a unique ID accept it and add it to the database// 
-			if(!rs.next()){
-				sql = "INSERT INTO people (id, fname, lname, address1, address2, postal, city, state, country, pollID)" +
-				"VALUES (' "+ person.getId() +"', '"+ person.getFname() +"', '"+ person.getLname() +"', '"+ person.getAdd1() +"', '"+ person.getAdd2() + "', '"+ person.getPost() +"', '"+ person.getCity() +"', '"+ person.getProv() +"', '"+ person.getCount()  +"', '"+ poll.getID() + "')" ;
+		return false;
+		}
+		return true; 
+	}
+
+	public boolean castVote(String vote, Person person) {
+		Statement stmt;
+		String sql;
+		// Do something only if database is enabled // 
+		if(databaseToggle){
+			try {
+				// Cast Vote //
+				sql = "UPDATE options SET votes = votes + 1 WHERE name='" + vote + "'";
 				stmt = (Statement) con.createStatement();
 				stmt.executeUpdate(sql); 
 				return true;
+			} catch (SQLException e) {
+				try{
+					// In the event the vote did not work remove person from db so they can vote later // 
+					sql = "DELETE FROM people WHERE id=" + person.getId();
+					stmt = (Statement) con.createStatement();
+					stmt.executeUpdate(sql);
+					System.out.println("Somethng went wrong adding votes to database Try again later");
+				}catch(Exception e1){
+					System.out.println("Something went very wrong adding votes to database. Contact advisor");
+				}
+				return false; 
 			}
-			return false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong entering a person into the database. Make sure all fields filled out match whats expected in the database");
+		}else{
+			return true;
 		}
-		return false;
 	}
 }

@@ -56,9 +56,9 @@ public class ClientHandler extends Thread {
 		}
 	}
 	private boolean castVote(String vote) {
-		//TODO Record vote into database // 
+		
 		debug(person.getFname() + " cast a vote for " + vote);
-		return true; 
+		return dbma.castVote(vote, person);
 	}
 	private boolean validatePerson() {
 		debug("validating Person");
